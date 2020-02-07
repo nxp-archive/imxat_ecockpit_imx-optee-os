@@ -72,6 +72,8 @@ mx8mp-flavorlist = \
 
 mx8qm-flavorlist = \
 	mx8qmmek \
+	mx8qmmeka53 \
+	mx8qmmeka72 \
 
 mx8qx-flavorlist = \
 	mx8qxpmek \
@@ -344,6 +346,20 @@ endif
 ifneq (,$(filter $(PLATFORM_FLAVOR),mx8qxpmek mx8qmmek))
 CFG_DDR_SIZE ?= 0x80000000
 CFG_UART_BASE ?= UART0_BASE
+endif
+
+ifneq (,$(filter $(PLATFORM_FLAVOR),mx8qmmeka53))
+CFG_DDR_SIZE ?= 0x40000000
+CFG_UART_BASE ?= UART0_BASE
+CFG_TEE_CORE_NB_CORE = 4
+CFG_ECOCKPIT_A53 = 1
+endif
+
+ifneq (,$(filter $(PLATFORM_FLAVOR),mx8qmmeka72))
+CFG_DDR_SIZE ?= 0x40000000
+CFG_UART_BASE ?= UART2_BASE
+CFG_TEE_CORE_NB_CORE = 6
+CFG_ECOCKPIT_A72 = 1
 endif
 
 ifneq (,$(filter $(PLATFORM_FLAVOR),mx8dxmek))
