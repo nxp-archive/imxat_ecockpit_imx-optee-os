@@ -167,6 +167,18 @@ void gic_init(struct gic_data *gd, vaddr_t gicc_base __maybe_unused,
 
 	gic_init_base_addr(gd, gicc_base, gicd_base);
 
+#if ((defined CFG_ECOCKPIT_A53) || (defined CFG_ECOCKPIT_A72))
+	/* check if GICD already configured, */
+	/* if yes, do not touch it, */
+	/* else it would break other partition's interrupts */
+	uint32_t gicd_ctlr = io_read32(gicd_base + GICD_CTLR);
+
+	if (gicd_ctlr & (GICC_CTLR_ENABLEGRP0 | GICC_CTLR_ENABLEGRP1 | GICC_CTLR_FIQEN)) {
+		IMSG("GIC Distributor already configured: skip gic_init \n");
+		return;
+	}
+#endif
+
 	for (n = 0; n <= gd->max_it / NUM_INTS_PER_REG; n++) {
 		/* Disable interrupts */
 		io_write32(gd->gicd_base + GICD_ICENABLER(n), 0xffffffff);
