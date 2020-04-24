@@ -43,10 +43,19 @@ TEE_Result __weak init_teecore(void)
 {
 	static int is_first = 1;
 
+	/* In ecockpit configuration, optee image is not reloaded for A53 */
+	/* so 'is_first' should be ignored to perform a clean reboot */
+	/* this function 'init_teecore' is only called at boot, so 'is_first' is useless anyway. */
+	/* Also, global variable 'tee_ctxes' must be reset. */
+#ifdef CFG_ECOCKPIT_A53
+	tee_ctxes.tqh_first = (void *)0;
+	tee_ctxes.tqh_last = &(tee_ctxes).tqh_first;
+#else
 	/* (DEBUG) for inits at 1st TEE service: when UART is setup */
 	if (!is_first)
 		return TEE_SUCCESS;
 	is_first = 0;
+#endif
 
 #ifdef CFG_WITH_USER_TA
 	tee_svc_uref_base = TEE_TEXT_VA_START;
